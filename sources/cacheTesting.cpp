@@ -94,7 +94,7 @@ void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 void experiment(size_t bufferSize, size_t number, researchTimes* times)
 {
   std::cout << "\t- experiment:\n" << "\t\tnumber: " << number << std::endl
-       << "\t\tinput_data:\n" << "\t\t\tbuffer_size: " << bufferSize
+       << "\t\tinput_data:\n" << "\t\t\tbuffer_size: " << bufferSize << " byte"
        << std::endl << "\t\tresults:\n" <<  "\t\t\tduration: "
        << times->time.count() << " ns" << std::endl;
 }
