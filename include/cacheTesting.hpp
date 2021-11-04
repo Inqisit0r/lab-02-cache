@@ -1,7 +1,7 @@
 // Copyright 2021 Your Name <your_email>
 
-#ifndef INCLUDE_EXAMPLE_HPP_
-#define INCLUDE_EXAMPLE_HPP_
+#ifndef INCLUDE_CACHETESTING_HPP_
+#define INCLUDE_CACHETESTING_HPP_
 
 #include <iostream>
 #include <stdexcept>
@@ -17,6 +17,8 @@
 typedef std::chrono::high_resolution_clock Time;
 typedef std::chrono::nanoseconds ns;
 typedef std::chrono::duration<float> diffFloat;
+
+static unsigned int seed = 54321;
 
 struct researchTimes {
   uint8_t tempValue;
@@ -41,4 +43,4 @@ void experiment(size_t bufferSize, size_t number, researchTimes* times);
 
 void formatPrint();
 
-#endif // INCLUDE_EXAMPLE_HPP_
+#endif // INCLUDE_CACHETESTING_HPP_

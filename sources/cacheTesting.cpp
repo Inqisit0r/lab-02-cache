@@ -8,8 +8,6 @@
  * 128 KB < 256 KB < 1024 KB < 6114 KB < 9171 KB
  */
 
-using namespace std;
-
 auto example() -> void
 {
   throw std::runtime_error("not implemented");
@@ -34,7 +32,7 @@ void frontResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 
   auto stopPoint = Time::now();
   diffFloat diff = startPoint - stopPoint;
-  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
+  times->time = std::chrono::duration_cast<ns>(abs(diff / 1000));
 }
 
 void reverseResearch(const uint8_t* in, size_t inSize, researchTimes* times)
@@ -56,7 +54,7 @@ void reverseResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 
   auto stopPoint = Time::now();
   diffFloat diff = startPoint - stopPoint;
-  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
+  times->time = std::chrono::duration_cast<ns>(abs(diff / 1000));
 }
 
 void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times)
@@ -68,7 +66,7 @@ void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 
   size_t counter = inSize / STEP;
 
-  vector<int> index(inSize);
+  std::vector<int> index(inSize);
   for (size_t i = 0; i < counter; i++)
   {
     index[i] = static_cast<int>(i * STEP);
@@ -88,15 +86,15 @@ void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times)
     diff += startPoint - stopPoint;
   }
 
-  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
+  times->time = std::chrono::duration_cast<ns>(abs(diff / 1000));
 }
 
 void experiment(size_t bufferSize, size_t number, researchTimes* times)
 {
-  cout << "\t- experiment:\n" << "\t\tnumber: " << number << endl
+  std::cout << "\t- experiment:\n" << "\t\tnumber: " << number << std::endl
        << "\t\tinput_data:\n" << "\t\t\tbuffer_size: " << bufferSize
-       << endl << "\t\tresults:\n" <<  "\t\t\tduration: "
-       << times->time.count() << " ns" << endl;
+       << std::endl << "\t\tresults:\n" <<  "\t\t\tduration: "
+       << times->time.count() << " ns" << std::endl;
 }
 
 void formatPrint()
@@ -104,15 +102,15 @@ void formatPrint()
   size_t bufferSizes[] = { 131072, 262144, 1048576, 6291456, 9437184 };
   researchTimes times = { 0, ZERO };
 
-  cout << "investigation:\n" << "\ttravel_variant: front\n"
-       << "\texperiments:" << endl;
+  std::cout << "investigation:\n" << "\ttravel_variant: front\n"
+       << "\texperiments:" << std::endl;
 
   for (size_t i = 0; i < 5; i++)
   {
     auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
     for (size_t j = 0; j < bufferSizes[i]; j++)
     {
-      array[j] = 1 + rand() % 128;
+      array[j] = rand_r(&seed) % 128;
     }
     frontResearch(array, bufferSizes[i], &times);
     experiment(bufferSizes[i], i + 1, &times);
@@ -122,15 +120,15 @@ void formatPrint()
     }
   }
 
-  cout << "\ttravel_variant: reverse\n"
-       << "\texperiments:" << endl;
+  std::cout << "\ttravel_variant: reverse\n"
+       << "\texperiments:" << std::endl;
 
   for (size_t i = 0; i < 5; i++)
   {
     auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
     for (size_t j = 0; j < bufferSizes[i]; j++)
     {
-      array[j] = 1 + rand() % 128;
+      array[j] = rand_r(&seed) % 128;
     }
     reverseResearch(array, bufferSizes[i], &times);
     experiment(bufferSizes[i], i + 1, &times);
@@ -140,15 +138,15 @@ void formatPrint()
     }
   }
 
-  cout << "\ttravel_variant: random\n"
-       << "\texperiments:" << endl;
+  std::cout << "\ttravel_variant: random\n"
+       << "\texperiments:" << std::endl;
 
   for (size_t i = 0; i < 5; i++)
   {
     auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
     for (size_t j = 0; j < bufferSizes[i]; j++)
     {
-      array[j] = 1 + rand() % 128;
+      array[j] = rand_r(&seed) % 128;
     }
     randomResearch(array, bufferSizes[i], &times);
     experiment(bufferSizes[i], i + 1, &times);
