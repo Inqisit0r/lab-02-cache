@@ -8,6 +8,8 @@
  * 128 KB < 256 KB < 1024 KB < 6114 KB < 9171 KB
  */
 
+static unsigned int seed = 54321;
+
 auto example() -> void
 {
   throw std::runtime_error("not implemented");
