@@ -11,20 +11,16 @@
 #include <algorithm>
 #include <random>
 
-#define IN_SIZE 1048
 #define STEP 16
 #define ZERO std::chrono::nanoseconds::zero()
 
 typedef std::chrono::high_resolution_clock Time;
-typedef std::chrono::nanoseconds ms;
+typedef std::chrono::nanoseconds ns;
 typedef std::chrono::duration<float> diffFloat;
 
-struct researchTimer
-{
+struct researchTimes {
   uint8_t tempValue;
-  ms frontTimer;
-  ms reversTimer;
-  ms randomTimer;
+  ns time;
 };
 
 /* cache_sizes['1'] = 256 KB
@@ -35,9 +31,13 @@ struct researchTimer
 
 auto example() -> void;
 
-void frontResearch(const uint8_t* in, size_t inSize, researchTimer* timer);
-void reverseResearch(const uint8_t* in, size_t inSize, researchTimer* timer);
-void randomResearch(const uint8_t* in, size_t inSize, researchTimer* timer);
+void frontResearch(const uint8_t* in, size_t inSize, researchTimes* times);
+
+void reverseResearch(const uint8_t* in, size_t inSize, researchTimes* times);
+
+void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times);
+
+void experiment(size_t bufferSize, size_t number, researchTimes* times);
 
 void formatPrint();
 

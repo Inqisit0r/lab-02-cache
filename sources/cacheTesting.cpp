@@ -15,11 +15,11 @@ auto example() -> void
   throw std::runtime_error("not implemented");
 }
 
-void frontResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
+void frontResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 {
   for (size_t i = 0; i < inSize; i += STEP)
   {
-    timer->tempValue = in[i];
+    times->tempValue = in[i];
   }
 
   auto startPoint = Time::now();
@@ -28,20 +28,20 @@ void frontResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
   {
     for (size_t j = 0; j < inSize; j += STEP)
     {
-      timer->tempValue = in[j];
+      times->tempValue = in[j];
     }
   }
 
   auto stopPoint = Time::now();
   diffFloat diff = startPoint - stopPoint;
-  timer->frontTimer = chrono::duration_cast<ms>(abs(diff / 1000));
+  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
 }
 
-void reverseResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
+void reverseResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 {
   for (size_t i = 0; i < inSize; i += STEP)
   {
-    timer->tempValue = in[i];
+    times->tempValue = in[i];
   }
 
   auto startPoint = Time::now();
@@ -50,20 +50,20 @@ void reverseResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
   {
     for (size_t j = 0; j < inSize; j += STEP)
     {
-      timer->tempValue = in[inSize - j];
+      times->tempValue = in[inSize - j];
     }
   }
 
   auto stopPoint = Time::now();
   diffFloat diff = startPoint - stopPoint;
-  timer->reversTimer = chrono::duration_cast<ms>(abs(diff / 1000));
+  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
 }
 
-void randomResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
+void randomResearch(const uint8_t* in, size_t inSize, researchTimes* times)
 {
   for (size_t i = 0; i < inSize; i += STEP)
   {
-    timer->tempValue = in[i];
+    times->tempValue = in[i];
   }
 
   size_t counter = inSize / STEP;
@@ -75,10 +75,6 @@ void randomResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
   }
 
   diffFloat diff;
-  random_device rd;
-  mt19937 gen(rd());
-  uniform_int_distribution<> dist(1,6);
-
   for (size_t i = 0; i < 1000; i++)
   {
     random_shuffle(index.begin(), index.end());
@@ -86,12 +82,79 @@ void randomResearch(const uint8_t* in, size_t inSize, researchTimer* timer)
     auto startPoint = Time::now();
     for (size_t j = 0; j < counter; j++)
     {
-      timer->tempValue = in[index[j]];
+      times->tempValue = in[index[j]];
     }
     auto stopPoint = Time::now();
     diff += startPoint - stopPoint;
-//    cout << i << endl;
   }
 
-  timer->randomTimer = chrono::duration_cast<ms>(abs(diff / 1000));
+  times->time = chrono::duration_cast<ns>(abs(diff / 1000));
+}
+
+void experiment(size_t bufferSize, size_t number, researchTimes* times)
+{
+  cout << "\t- experiment:\n" << "\t\tnumber: " << number << endl
+       << "\t\tinput_data:\n" << "\t\t\tbuffer_size: " << bufferSize
+       << endl << "\t\tresults:\n" <<  "\t\t\tduration: "
+       << times->time.count() << " ns" << endl;
+}
+
+void formatPrint()
+{
+  size_t bufferSizes[] = { 131072, 262144, 1048576, 6291456, 9437184 };
+  researchTimes times = { 0, ZERO };
+
+  cout << "investigation:\n" << "\ttravel_variant: front\n"
+       << "\texperiments:" << endl;
+
+  for (size_t i = 0; i < 5; i++)
+  {
+    auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
+    for (size_t j = 0; j < bufferSizes[i]; j++)
+    {
+      array[j] = 1 + rand() % 128;
+    }
+    frontResearch(array, bufferSizes[i], &times);
+    experiment(bufferSizes[i], i + 1, &times);
+    if (array)
+    {
+      free(array);
+    }
+  }
+
+  cout << "\ttravel_variant: reverse\n"
+       << "\texperiments:" << endl;
+
+  for (size_t i = 0; i < 5; i++)
+  {
+    auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
+    for (size_t j = 0; j < bufferSizes[i]; j++)
+    {
+      array[j] = 1 + rand() % 128;
+    }
+    reverseResearch(array, bufferSizes[i], &times);
+    experiment(bufferSizes[i], i + 1, &times);
+    if (array)
+    {
+      free(array);
+    }
+  }
+
+  cout << "\ttravel_variant: random\n"
+       << "\texperiments:" << endl;
+
+  for (size_t i = 0; i < 5; i++)
+  {
+    auto* array = static_cast<uint8_t*>(malloc(bufferSizes[i]));
+    for (size_t j = 0; j < bufferSizes[i]; j++)
+    {
+      array[j] = 1 + rand() % 128;
+    }
+    randomResearch(array, bufferSizes[i], &times);
+    experiment(bufferSizes[i], i + 1, &times);
+    if (array)
+    {
+      free(array);
+    }
+  }
 }
